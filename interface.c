@@ -1,5 +1,7 @@
 #include "interface.h"
 
+// Driver function for the user menu, runs forever
+//until user selects '4' to exit.
 void user_menu(struct movie* list) {
     bool done = false;
     int selection = 0;
@@ -37,6 +39,8 @@ void user_menu(struct movie* list) {
 }
 
 
+// Gets the movies from the linked list that
+// released in a user-inputted year
 void get_movies_year(struct movie* list) {
     int year = 0;
     int movies_printed = 0;
@@ -60,8 +64,9 @@ void get_movies_year(struct movie* list) {
         }
         printf("\n");
 
+        // If no movies found, print message
         if(movies_printed == 0) {
-            printf("No movies were found for the selected year.\n");
+            printf("No data about movies released in the year %d.\n", year);
         }
     } else {
         printf("\nYou entered an invalid year. Please try again\n");
@@ -70,6 +75,8 @@ void get_movies_year(struct movie* list) {
 }
 
 
+// Get all movies in user-specified language
+// Case sensetive
 void get_movies_lang(struct movie* list) {
     char lang[20];
     int movies_printed = 0;
@@ -79,8 +86,11 @@ void get_movies_lang(struct movie* list) {
     printf("\nEnter the language for which you want to see movies: ");
     scanf ("%19s", &lang);
 
+    // Traverse entire linked list
     while (curr != NULL) {
         for(int i = 0; i < curr->num_langs; i++) {
+            // If any of languages match user string, print movie
+            // Only match up to length of movie lang
             if(strncmp(curr->langs[i], lang, strlen(curr->langs[i])) == 0) {
                 printf("\n%d %s", curr->year, curr->title);
                 movies_printed++;
@@ -92,17 +102,19 @@ void get_movies_lang(struct movie* list) {
     }
     printf("\n");
 
+    // If no movies found, print message
     if(movies_printed == 0) {
-        printf("No movies were found for the entered language.\n");
+        printf("No data about movies released in %s\n", lang);
     }
 }
 
 
+// Get the highest rated movie for a specified year
 void get_movies_rating(struct movie* list) {
     struct movie* curr = list;
     struct movie highest;
 
-    // Loop thru each year 
+    // Loop thru list for each year 
     for(int i = 1900; i < 2022; i++) {
         // Reset highst rating tracker
         highest.rating = 0.0;
@@ -112,7 +124,6 @@ void get_movies_rating(struct movie* list) {
             if(curr->year == i) {
                 // If found a higher, record the rating and title
                 if(curr->rating > highest.rating){
-                    //highest.title = calloc(strlen(curr->title), sizeof(char));
                     highest.title = curr->title;
                     highest.rating = curr->rating;
                 }
@@ -132,10 +143,14 @@ void get_movies_rating(struct movie* list) {
     printf("\n");
 }
 
+
+// Free memory associated with linked list
+// once program is set to close
 void free_list(struct movie* list) {
     struct movie* curr = list;
     struct movie* next = list;
 
+    // While there are still more nodes in the list
     while (next != NULL) {
         curr = next;
         free(curr->title);

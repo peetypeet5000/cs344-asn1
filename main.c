@@ -1,10 +1,9 @@
 #include "main.h"
 
 /*
-*   Process the file provided as an argument to the program to
-*   create a linked list of movie structs and print out the list.
+Checks the provided command line argument, starts functions
+to process file & start user interactive menu
 */
-
 int main(int argc, char *argv[])
 {
     if (argc < 2)
