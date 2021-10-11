@@ -12,6 +12,7 @@
 void user_menu(struct movie*);
 void get_movies_year(struct movie*);
 void get_movies_lang(struct movie*);
-void get_movies_rating(struct movie* list);
+void get_movies_rating(struct movie*);
+void free_list(struct movie*);
 
 #endif

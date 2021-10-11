@@ -3,7 +3,7 @@
 /* Parse the current line which is space delimited and create a
 *  movie struct with the data in this line
 */
-struct movie *createMovie(char *currLine)
+struct movie *create_movie(char *currLine)
 {
     struct movie *currMovie = malloc(sizeof(struct movie));
 
@@ -82,7 +82,7 @@ struct movie *process_file(char *filePath)
     while ((nread = getline(&currLine, &len, moviesFile)) != -1)
     {
         // Get a new movie node corresponding to the current line
-        struct movie *newNode = createMovie(currLine);
+        struct movie *newNode = create_movie(currLine);
 
         // Is this the first node in the linked list?
         if (head == NULL)

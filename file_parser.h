@@ -15,7 +15,7 @@ struct movie
     struct movie *next;
 };
 
-struct movie *createMovie(char*);
+struct movie *create_movie(char*);
 struct movie *process_file(char*);
 
 #endif

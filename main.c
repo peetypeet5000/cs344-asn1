@@ -13,11 +13,11 @@ int main(int argc, char *argv[])
         printf("Example usage: ./movies movies_sample_1.csv\n");
         return EXIT_FAILURE;
     }
+    //Read in movied
     struct movie *list = process_file(argv[1]);
 
+    // Start interactive menu
     user_menu(list);
-
-    free_list(list);
     
     return EXIT_SUCCESS;
 }

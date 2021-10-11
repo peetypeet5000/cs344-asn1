@@ -14,17 +14,17 @@ void user_menu(struct movie* list) {
             case 1:
                 get_movies_year(list);
                 break;
-            
+            // Get highest rated movie each year
             case 2:
                 get_movies_rating(list);
                 break;
-
             // Get movies for a certain language
             case 3:
                 get_movies_lang(list);
                 break;
             // End Program
             case 4:
+                free_list(list);
                 done = true;
                 break;
 
@@ -130,4 +130,20 @@ void get_movies_rating(struct movie* list) {
         curr = list;
     }
     printf("\n");
+}
+
+void free_list(struct movie* list) {
+    struct movie* curr = list;
+    struct movie* next = list;
+
+    while (next != NULL) {
+        curr = next;
+        free(curr->title);
+        for(int i = 0; i < curr->num_langs; i++) {
+            free(curr->langs[i]);
+        }
+        // Move to next node in list
+        next = curr->next;
+        free(curr);
+        }
 }
