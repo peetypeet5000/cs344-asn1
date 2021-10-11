@@ -10,6 +10,7 @@ void user_menu(struct movie* list) {
         scanf ("%d", &selection);
 
         switch(selection) {
+            // Get movies for a certain year
             case 1:
                 get_movies_year(list);
                 break;
@@ -17,7 +18,9 @@ void user_menu(struct movie* list) {
             case 2:
                 break;
 
+            // Get movies for a certain language
             case 3:
+                get_movies_lang(list);
                 break;
             // End Program
             case 4:
@@ -62,5 +65,32 @@ void get_movies_year(struct movie* list) {
     } else {
         printf("\nYou entered an invalid year. Please try again\n");
         get_movies_year(list);
+    }
+}
+
+void get_movies_lang(struct movie* list) {
+    char lang[20];
+    int movies_printed = 0;
+    struct movie* curr = list;
+
+    // Get user language input
+    printf("\nEnter the language for which you want to see movies: ");
+    scanf ("%19s", &lang);
+
+    while (curr != NULL) {
+        for(int i = 0; i < curr->num_langs; i++) {
+            if(strncmp(curr->langs[i], lang, strlen(curr->langs[i])) == 0) {
+                printf("\n%d %s", curr->year, curr->title);
+                movies_printed++;
+            }
+        }
+
+        // Move to next node in list
+        curr = curr->next;
+    }
+    printf("\n");
+
+    if(movies_printed == 0) {
+        printf("No movies were found for the entered language.\n");
     }
 }
