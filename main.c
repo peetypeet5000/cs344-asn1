@@ -1,81 +1,87 @@
-// If you are not compiling with the gcc option --std=gnu99, then
-// uncomment the following line or you might get a compiler warning
-//#define _GNU_SOURCE
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-/* struct for student information */
-struct student
-{
-    char *onid;
-    char *lastName;
-    char *firstName;
-    char *major;
-    struct student *next;
-};
+#include "main.h"
 
 /* Parse the current line which is space delimited and create a
-*  student struct with the data in this line
+*  movie struct with the data in this line
 */
-struct student *createStudent(char *currLine)
+struct movie *createMovie(char *currLine)
 {
-    struct student *currStudent = malloc(sizeof(struct student));
+    struct movie *currMovie = malloc(sizeof(struct movie));
 
     // For use with strtok_r
     char *saveptr;
+    char *langptr;
 
-    // The first token is the ONID
-    char *token = strtok_r(currLine, " ", &saveptr);
-    currStudent->onid = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(currStudent->onid, token);
+    // Get title
+    char *token = strtok_r(currLine, ",", &saveptr);
+    currMovie->title = calloc(strlen(token) + 1, sizeof(char));
+    strcpy(currMovie->title, token);
 
-    // The next token is the lastName
-    token = strtok_r(NULL, " ", &saveptr);
-    currStudent->lastName = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(currStudent->lastName, token);
+    // Get year
+    token = strtok_r(NULL, ",", &saveptr);
+    // Convert to an int
+    int year_int = atoi(token);
+    currMovie->year = year_int;
 
-    // The next token is the firstName
-    token = strtok_r(NULL, " ", &saveptr);
-    currStudent->firstName = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(currStudent->firstName, token);
+    // Get lang array
+    token = strtok_r(NULL, ",", &saveptr);
+    // Allocate space for the array excluding the []
+    char* lang_array = calloc(strlen(token) - 1, sizeof(char));
+    // Copy string without first and last char
+    strncpy(lang_array, token + 1, strlen(token) - 2);
 
-    // The last token is the major
-    token = strtok_r(NULL, "\n", &saveptr);
-    currStudent->major = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(currStudent->major, token);
+    // Get first language token
+    int lang_num = 0;
+    token = strtok_r(lang_array, ";", &langptr); 
+    // Keep tokenizing until no more
+    while(token != NULL) {
+        // Allocated space, copy in, get next token
+        currMovie->langs[lang_num] = calloc(strlen(token) + 1, sizeof(char));
+        strcpy(currMovie->langs[lang_num++], token);
+        token = strtok_r(NULL, ";", &langptr);
+    }
+    // Save the number of languages in the struct
+    currMovie->num_langs = lang_num;
 
-    // Set the next node to NULL in the newly created student entry
-    currStudent->next = NULL;
+    
 
-    return currStudent;
+    // Get rating
+    token = strtok_r(NULL, ",", &saveptr);
+    // Convert to a float
+    float rating_float = atof(token);
+    currMovie->rating = rating_float;
+
+    // Set the next node to NULL in the newly created movies entry
+    currMovie->next = NULL;
+
+    return currMovie;
 }
 
 /*
-* Return a linked list of students by parsing data from
+* Return a linked list of movies by parsing data from
 * each line of the specified file.
 */
-struct student *processFile(char *filePath)
+struct movie *processFile(char *filePath)
 {
     // Open the specified file for reading only
-    FILE *studentFile = fopen(filePath, "r");
+    FILE *moviesFile = fopen(filePath, "r");
 
     char *currLine = NULL;
     size_t len = 0;
     ssize_t nread;
-    char *token;
 
     // The head of the linked list
-    struct student *head = NULL;
+    struct movie *head = NULL;
     // The tail of the linked list
-    struct student *tail = NULL;
+    struct movie *tail = NULL;
+
+    //Skip first line
+    nread = getline(&currLine, &len, moviesFile);
 
     // Read the file line by line
-    while ((nread = getline(&currLine, &len, studentFile)) != -1)
+    while ((nread = getline(&currLine, &len, moviesFile)) != -1)
     {
-        // Get a new student node corresponding to the current line
-        struct student *newNode = createStudent(currLine);
+        // Get a new movie node corresponding to the current line
+        struct movie *newNode = createMovie(currLine);
 
         // Is this the first node in the linked list?
         if (head == NULL)
@@ -94,36 +100,40 @@ struct student *processFile(char *filePath)
         }
     }
     free(currLine);
-    fclose(studentFile);
+    fclose(moviesFile);
     return head;
 }
 
 /*
-* Print data for the given student
+* Print data for the given movie
 */
-void printStudent(struct student* aStudent){
-  printf("%s, %s %s, %s\n", aStudent->onid,
-               aStudent->firstName,
-               aStudent->lastName,
-               aStudent->major);
+void printMovie(struct movie* a_movie){
+  printf("%s, %i, %s %s %s %s %s %.1f\n", a_movie->title,
+               a_movie->year,
+               a_movie->langs[0],
+               a_movie->langs[1],
+               a_movie->langs[2],
+               a_movie->langs[3],
+               a_movie->langs[4],
+               a_movie->rating);
 }
 /*
-* Print the linked list of students
+* Print the linked list of movies
 */
-void printStudentList(struct student *list)
+void printMoviesList(struct movie *list)
 {
     while (list != NULL)
     {
-        printStudent(list);
+        printMovie(list);
         list = list->next;
     }
 }
 
 /*
 *   Process the file provided as an argument to the program to
-*   create a linked list of student structs and print out the list.
+*   create a linked list of movie structs and print out the list.
 *   Compile the program as follows:
-*       gcc --std=gnu99 -o students main.c
+*       gcc --std=gnu99 -o movies main.c
 */
 
 int main(int argc, char *argv[])
@@ -131,10 +141,10 @@ int main(int argc, char *argv[])
     if (argc < 2)
     {
         printf("You must provide the name of the file to process\n");
-        printf("Example usage: ./students student_info1.txt\n");
+        printf("Example usage: ./movies movies_sample_1.csv\n");
         return EXIT_FAILURE;
     }
-    struct student *list = processFile(argv[1]);
-    printStudentList(list);
+    struct movie *list = processFile(argv[1]);
+    printMoviesList(list);
     return EXIT_SUCCESS;
 }
