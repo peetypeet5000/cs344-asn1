@@ -1,4 +1,4 @@
-CC = gcc --std=gnu99 -g -Wall
+CC = gcc --std=gnu99 -g
 exe_file = movies
 $(exe_file): main.o file_parser.o interface.o
 	$(CC) main.o file_parser.o interface.o -o $(exe_file)
