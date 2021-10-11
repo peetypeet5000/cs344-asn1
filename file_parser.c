@@ -41,6 +41,7 @@ struct movie *create_movie(char *currLine)
     }
     // Save the number of languages in the struct
     currMovie->num_langs = lang_num;
+    free(lang_array);
 
     
 
