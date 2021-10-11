@@ -16,6 +16,6 @@ struct movie
 };
 
 struct movie *createMovie(char*);
-struct movie *processFile(char*);
+struct movie *process_file(char*);
 
 #endif

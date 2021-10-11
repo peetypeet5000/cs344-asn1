@@ -16,6 +16,7 @@ void user_menu(struct movie* list) {
                 break;
             
             case 2:
+                get_movies_rating(list);
                 break;
 
             // Get movies for a certain language
@@ -68,6 +69,7 @@ void get_movies_year(struct movie* list) {
     }
 }
 
+
 void get_movies_lang(struct movie* list) {
     char lang[20];
     int movies_printed = 0;
@@ -93,4 +95,39 @@ void get_movies_lang(struct movie* list) {
     if(movies_printed == 0) {
         printf("No movies were found for the entered language.\n");
     }
+}
+
+
+void get_movies_rating(struct movie* list) {
+    struct movie* curr = list;
+    struct movie highest;
+
+    // Loop thru each year 
+    for(int i = 1900; i < 2022; i++) {
+        // Reset highst rating tracker
+        highest.rating = 0.0;
+        
+        // Loop thru list, keep track of highest
+        while (curr != NULL) {
+            if(curr->year == i) {
+                // If found a higher, record the rating and title
+                if(curr->rating > highest.rating){
+                    //highest.title = calloc(strlen(curr->title), sizeof(char));
+                    highest.title = curr->title;
+                    highest.rating = curr->rating;
+                }
+            }
+        // Move to next node in list
+        curr = curr->next;
+        }
+
+        //Once traversed whole list, print highest(if any)
+        if(highest.rating > 0.0) {
+            printf("\n%d %.1f %s", i, highest.rating, highest.title);
+        }
+
+        // Reset to head of list
+        curr = list;
+    }
+    printf("\n");
 }

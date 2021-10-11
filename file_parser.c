@@ -60,7 +60,7 @@ struct movie *createMovie(char *currLine)
 * Return a linked list of movies by parsing data from
 * each line of the specified file.
 */
-struct movie *processFile(char *filePath)
+struct movie *process_file(char *filePath)
 {
     // Open the specified file for reading only
     FILE *moviesFile = fopen(filePath, "r");
